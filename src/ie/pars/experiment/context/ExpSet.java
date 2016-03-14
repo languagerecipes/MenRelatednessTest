@@ -41,7 +41,8 @@ public class ExpSet {
 
     }
 
-    public void printConfiguration(File file) throws IOException {
+    public void printConfiguration() throws IOException {
+        File file = new File(this.getRoot() + "configset-" + this.getExpIdentifier());
         PrintWriter pw = new PrintWriter(new FileWriter(file));
 
         pw.println("=== Input Dataset ===");

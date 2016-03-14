@@ -14,31 +14,28 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.phil.hhu.men.test;
-
-import ie.pars.experiment.context.ExpSet;
-import java.io.File;
-import javax.xml.parsers.ParserConfigurationException;
+package ie.pars.experiment.context;
 
 /**
  *
  * @author Behrang QasemiZadeh <zadeh at phil.hhu.de>
  */
-public class ProcessChain {
-    
-    public static void main(String[] sugar) throws Exception {
+public class ContextLemmaTag extends ContextParameters {
 
-        if (sugar.length != 4) {
-            throw new Exception("Provide arguments for setting");
-        }
-        ExpSet expSet = new ExpSet(sugar[0], Integer.parseInt(sugar[1]), Integer.parseInt(sugar[2]));
+    private String lemma;
+    private String tag;
 
-        new Step_1_CreateRawContextFrequencyFiles(expSet);
-        new STEP_2_ContextFilesToVector(expSet);
-        new STEP_3_ComputePairwiseSimilarity(expSet, "cos");
-        new STEP_4_CompareResults(expSet, "cos");
-
-        expSet.printConfiguration();
-
+    public ContextLemmaTag(String lemma, String tag) {
+        this.lemma = lemma;
+        this.tag = tag;
     }
+
+    public String getLemma() {
+        return lemma;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
 }

@@ -54,9 +54,9 @@ public class STEP_2_ContextFilesToVector {
                     }
                 }
                 System.out.println(mapVector.size() + " count all freq: " + (countall / 6));
-                if (countall % 6 != 0) {
-                    System.err.println(f.getName());
-                }
+//                if (countall % 6 != 0) {
+//                    System.err.println(f.getName());
+//                }
                 StringBuilder sb = new StringBuilder();
                 for (String key : mapVector.keySet()) {
                     sb.append("\t").append(key).append(" : ").append(mapVector.get(key));

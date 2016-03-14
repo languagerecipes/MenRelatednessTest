@@ -31,18 +31,18 @@ import java.util.concurrent.TimeUnit;
 public class Step_1_CreateRawContextFrequencyFiles {
 
     public static void main(String[] ss) throws FileNotFoundException, Exception {
-        
+
         if (ss.length != 3) {
             throw new Exception("Provide arguments for setting");
         }
         ExpSet expSet = new ExpSet(ss[0], Integer.parseInt(ss[1]), Integer.parseInt(ss[2]));
-       new  Step_1_CreateRawContextFrequencyFiles(expSet);
+        new Step_1_CreateRawContextFrequencyFiles(expSet);
     }
 
     public Step_1_CreateRawContextFrequencyFiles(ExpSet expSet) throws IOException, InterruptedException, Exception {
         TreeMap<String, Writer> outputWriters = new TreeMap();
         TreeSet<String> readMenData = readMenData(expSet.menFile);
-        
+
         System.out.println("Fectching results using NoSkE searcher ... ");
         System.out.println("Dumping files at " + expSet.getRawContextFiles());
         ExecutorService newFixedThreadPool = Executors.newFixedThreadPool(48);
