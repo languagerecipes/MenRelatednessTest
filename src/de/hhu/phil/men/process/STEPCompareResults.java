@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package de.phil.hhu.men.test;
+package de.hhu.phil.men.process;
 
-import de.phil.hhu.men.test.obj.MenPair;
+import de.phil.hhu.men.utils.MenUtils;
+import de.phil.hhu.obj.MenPair;
 import ie.pars.experiment.context.ExpSet;
 import java.io.FileWriter;
 
@@ -20,7 +21,7 @@ import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
  *
  * @author bq
  */
-public class STEP_4_CompareResults {
+public class STEPCompareResults {
 
     public static void main(String[] ss) throws IOException, Exception {
 
@@ -28,10 +29,10 @@ public class STEP_4_CompareResults {
             throw new Exception("Provide arguments for setting");
         }
         ExpSet expSet = new ExpSet(ss[0], Integer.parseInt(ss[1]), Integer.parseInt(ss[2]));
-        new STEP_4_CompareResults(expSet, ss[3]);
+        // new STEP_4_CompareResults(expSet, ss[3]);
     }
 
-    public STEP_4_CompareResults(ExpSet expSet, String simType) throws IOException {
+    public static void compareResults(ExpSet expSet, String simType) throws IOException {
 
         List<MenPair> machineRanked = MenUtils.readMenPair(expSet.getSimilarityResultFile(simType));
         List<MenPair> humanRanked = MenUtils.readMenPair(expSet.menFile);

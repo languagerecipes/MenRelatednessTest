@@ -14,21 +14,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package ie.pars.experiment.context;
+package de.phil.hhu.obj;
 
 /**
  *
  * @author Behrang QasemiZadeh <zadeh at phil.hhu.de>
  */
-public class ContextLemmaTag extends ContextParameters {
-
-    private String lemma;
-    private String tag;
-
-    public ContextLemmaTag(String lemma, String tag) {
-        this.lemma = lemma;
-        this.tag = tag;
-    }
+public class MenEntry implements Comparable<MenEntry> {
+    String lemma;
+    String tag;
 
     public String getLemma() {
         return lemma;
@@ -38,4 +32,20 @@ public class ContextLemmaTag extends ContextParameters {
         return tag;
     }
 
+    public MenEntry(String lemma, String tag) {
+        this.lemma = lemma;
+        this.tag = tag;
+    }
+
+    @Override
+    public int compareTo(MenEntry t) {
+        int cl = t.lemma.compareTo(this.lemma);
+        int ct = t.tag.compareTo(this.tag);
+        if(cl==0){
+            return ct;
+        }else{
+            return cl;
+        }
+    }
+    
 }

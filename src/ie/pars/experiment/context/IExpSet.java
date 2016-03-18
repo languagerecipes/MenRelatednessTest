@@ -16,15 +16,35 @@
  */
 package ie.pars.experiment.context;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
- * Interface for objects that define the type of targeted "linguistic structure"
- * , for instance a lemma and its pos category in the Men Test
  *
  * @author Behrang QasemiZadeh <zadeh at phil.hhu.de>
  */
-public interface ContextQuery {
+public interface IExpSet {
 
-    String getContextQuery();
+    public String getRoot();
 
-    String getContextQueryFileIdentifier();
+    public void printConfiguration();
+
+    public List<FCRITInfo> getFCRITContextQueries();
+
+    public String getContextQuery(ContextQuery clt);
+
+    public String getExpIdentifier();
+
+    public String getSimilarityResultFile(String simMeasureType);
+
+    public String getSparseVectorPresentations();
+
+    public String getRawContextFilesPath();
+
+    public String getRawContextFilesName(ContextQuery cq, FCRITInfo fcrit);
+
+    public String getFinalResultReport();
+
+    public String getSparseVectorPresentations(ContextQuery ctxQuery);
+
 }

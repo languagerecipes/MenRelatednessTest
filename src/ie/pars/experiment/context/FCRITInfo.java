@@ -17,9 +17,30 @@
 package ie.pars.experiment.context;
 
 /**
- *
+ * Object that encapsulates information about the way freqs are collected.
  * @author Behrang QasemiZadeh <zadeh at phil.hhu.de>
  */
-public abstract class ContextParameters {
-    
+public class FCRITInfo {
+
+    private final String fcritQuery;
+    private final String fcritFileIdentifier;
+
+    public String getFcritFileIdentifier() {
+        return fcritFileIdentifier;
+    }
+
+    public String getFcritQuery() {
+        return fcritQuery;
+    }
+
+    public FCRITInfo(String fcritQuery, String fcritFileName) {
+        this.fcritQuery = fcritQuery;
+        this.fcritFileIdentifier = fcritFileName;
+    }
+
+    @Override
+    public String toString() {
+        return fcritQuery + "\t" + fcritFileIdentifier;
+    }
+
 }
