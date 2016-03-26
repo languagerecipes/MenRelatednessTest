@@ -16,11 +16,11 @@
  */
 package de.phil.hhu.men.standard.processchains;
 
-import de.hhu.phil.buildvectors.StanardContextVector;
+import de.hhu.phil.buildvectors.StanardContextVectorBuilder;
 import static de.phil.hhu.men.standard.processchains.StaticStepProcesses.processSimilarities;
 import de.phil.hhu.men.utils.MenUtils;
 import de.hhu.phil.men.process.STEPCompareResults;
-import de.hhu.phil.buildvectors.Step1CollectFreq;
+import de.hhu.phil.buildvectors.Step1CollectFreqVectorBits;
 import de.phil.hhu.obj.MenEntry;
 import de.phil.hhu.obj.MenPair;
 import ie.pars.experiment.context.ContextQueryLemmaTag;
@@ -53,9 +53,9 @@ public class ProcessChainModel2 {
         for (int i = 1; i < 2; i++) {
 
             ExpSet expSet = new ExpSet("t15032015-", -1 * i, i);
-            String simType = "cos";
+            String simType = "l2Std";
             StaticStepProcesses.processFetch(expSet);
-            StaticStepProcesses.processAggregiate(expSet);
+            StaticStepProcesses.processAggregiate(expSet,simType);
             StaticStepProcesses.processSimilarities(expSet,"cos");
             
         }

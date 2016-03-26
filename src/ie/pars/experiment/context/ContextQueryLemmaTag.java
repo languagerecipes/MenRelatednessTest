@@ -20,7 +20,7 @@ package ie.pars.experiment.context;
  *
  * @author Behrang QasemiZadeh <zadeh at phil.hhu.de>
  */
-public class ContextQueryLemmaTag implements ContextQuery {
+public class ContextQueryLemmaTag implements IContextQuery {
 
     private final String lemma;
     private final String tag;

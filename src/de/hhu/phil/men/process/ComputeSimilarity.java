@@ -16,29 +16,19 @@
  */
 package de.hhu.phil.men.process;
 
-import ie.pars.clac.vector.TSparseVector;
-import ie.pars.clac.vector.TroveUtils;
-import de.phil.hhu.men.utils.MenUtils;
-import de.hhu.phil.men.process.STEPCompareResults;
-import de.phil.hhu.obj.MenPair;
+import ie.pars.clac.vector.SimpleSparse;
+import ie.pars.clac.vector.SparseVector;
 
-import ie.pars.experiment.context.ContextQuery;
-import ie.pars.experiment.context.ContextQueryLemmaTag;
+
 import ie.pars.experiment.context.ExpSet;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.List;
 import java.util.TreeMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import ie.pars.experiment.context.IContextQuery;
 
 /**
  *
@@ -48,25 +38,33 @@ public class ComputeSimilarity implements Runnable {
 
     private ExpSet expSet;
     private TreeMap<String, Integer> keyStringMap;
-    ContextQuery contextQueryLemmaTag1;
-    ContextQuery contextQueryLemmaTag2;
+    IContextQuery contextQueryLemmaTag1;
+    IContextQuery contextQueryLemmaTag2;
     Writer writer;
-
-    public ComputeSimilarity(ExpSet expSet, ContextQuery contextQueryLemmaTag1, ContextQuery contextQueryLemmaTag2, Writer writer) throws Exception {
+    String simWeightingType;
+    
+    public ComputeSimilarity(ExpSet expSet, 
+            String simWeightingType,
+            IContextQuery contextQueryLemmaTag1, 
+            IContextQuery contextQueryLemmaTag2, 
+            Writer writer) throws Exception {
         keyStringMap = new TreeMap();
         this.expSet = expSet;
         this.contextQueryLemmaTag1 = contextQueryLemmaTag1;
         this.contextQueryLemmaTag2 = contextQueryLemmaTag2;
         this.writer = writer;
+        this.simWeightingType = simWeightingType;
+        
     }
 
-    private TSparseVector loadAggFreqContextFilesToMap(ContextQuery contextQueryLemmaTag) throws Exception {
+    private SimpleSparse loadAggFreqContextFilesToMap(IContextQuery contextQueryLemmaTag) throws Exception {
         //TreeMap<String, Integer> mapVector = new TreeMap();
         // check weather the vector has been cashed before
 
-        TSparseVector spa = new TSparseVector();
+        SimpleSparse spa = new SimpleSparse(); // I get a lot of error using the trove objetcs! :-(
+      //  SparseVector spv = new 
         //System.out.println(expSet.getSparseVectorPresentations(contextQueryLemmaTag));
-        File expVectorFile = new File(expSet.getSparseVectorPresentations(contextQueryLemmaTag));
+        File expVectorFile = new File(expSet.getSparseVectorPresentations(contextQueryLemmaTag, simWeightingType));
 
         if (!expVectorFile.exists()) {
             throw new Exception("Context vector not yet aggregated  .. future add calling to aggreg...");
@@ -77,8 +75,8 @@ public class ComputeSimilarity implements Runnable {
             if (line.trim().length() != 0) {
                 String[] split = line.split(" : ");
                 Integer key = getKey(split[0]);
-                int parseInt = Integer.parseInt(split[1]);
-                spa.add(key, parseInt);
+                double value = Double.parseDouble(split[1]);
+                spa.setValue(key, value);
             }
         }
         br.close();
@@ -100,9 +98,9 @@ public class ComputeSimilarity implements Runnable {
     @Override
     public void run() {
         try {
-            TSparseVector vec1 = loadAggFreqContextFilesToMap(contextQueryLemmaTag1);
-            TSparseVector vec2 = loadAggFreqContextFilesToMap(contextQueryLemmaTag2);
-            double cosineSimilarity = TroveUtils.cosineSimilarity(vec1, vec2);
+            SimpleSparse vec1 = loadAggFreqContextFilesToMap(contextQueryLemmaTag1);
+            SimpleSparse vec2 = loadAggFreqContextFilesToMap(contextQueryLemmaTag2);
+            double cosineSimilarity = vec1.cosine(vec2);
             synchronized (writer) {
                 writer.write(this.contextQueryLemmaTag1.getContextQueryFileIdentifier()
                         + " " + this.contextQueryLemmaTag2.getContextQueryFileIdentifier() + " " + cosineSimilarity

@@ -18,7 +18,7 @@ package de.phil.hhu.men.standard.processchains;
 
 import de.phil.hhu.men.utils.MenUtils;
 import de.hhu.phil.men.process.STEPCompareResults;
-import de.hhu.phil.buildvectors.Step1CollectFreq;
+import de.hhu.phil.buildvectors.Step1CollectFreqVectorBits;
 import de.phil.hhu.obj.MenEntry;
 import de.phil.hhu.obj.MenPair;
 import ie.pars.experiment.context.ContextQueryLemmaTag;
@@ -47,16 +47,17 @@ public class ProcessChainModel3 {
     public static void main(String[] s) throws FileNotFoundException, Exception {
        experimentComputeChain  = Executors.newFixedThreadPool(10);
         
-        int theSecodn = 20;
+        int theSecodn = 2;
 
-        for (int i = 1; i < 110; i++) {
+        String simType = "l2Std";
+        for (int i = 1; i < 2; i++) {
 
             ExpSet expSet = new ExpSet("15032015-", -1 * i, i);
-            String simType = "cos";
-            Set<MenEntry> readMenData = MenUtils.readMenData(expSet.menFile);
+            
+            Set<MenEntry> readMenData = MenUtils.readMenData(expSet.getMenFile());
             System.out.println("Fectching results using NoSkE searcher ... ");
             System.out.println("Dumping files at " + expSet.getRawContextFilesPath());
-            Step1CollectFreq s1 = new Step1CollectFreq(expSet, 40);
+            Step1CollectFreqVectorBits s1 = new Step1CollectFreqVectorBits(expSet, 3);
             for (MenEntry ent : readMenData) {
                 ContextQueryLemmaTag contextQueryLemmaTag = new ContextQueryLemmaTag(ent.getLemma(), ent.getTag());
                 List<FCRITInfo> fcritContextQueries = expSet.getFCRITContextQueries();

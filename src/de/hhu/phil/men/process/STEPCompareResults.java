@@ -35,7 +35,7 @@ public class STEPCompareResults {
     public static void compareResults(ExpSet expSet, String simType) throws IOException {
 
         List<MenPair> machineRanked = MenUtils.readMenPair(expSet.getSimilarityResultFile(simType));
-        List<MenPair> humanRanked = MenUtils.readMenPair(expSet.menFile);
+        List<MenPair> humanRanked = MenUtils.readMenPair(expSet.getMenFile());
 
         SpearmansCorrelation spc = new SpearmansCorrelation();
 

@@ -17,10 +17,10 @@
 package de.phil.hhu.men.standard.processchains;
 
 import de.hhu.phil.men.process.ComputeSimilarity;
-import de.hhu.phil.buildvectors.StanardContextVector;
+import de.hhu.phil.buildvectors.StanardContextVectorBuilder;
 import de.phil.hhu.men.utils.MenUtils;
 import de.hhu.phil.men.process.STEPCompareResults;
-import de.hhu.phil.buildvectors.Step1CollectFreq;
+import de.hhu.phil.buildvectors.Step1CollectFreqVectorBits;
 import de.phil.hhu.obj.MenEntry;
 import de.phil.hhu.obj.MenPair;
 import ie.pars.experiment.context.ContextQueryLemmaTag;
@@ -50,9 +50,9 @@ public class StaticStepProcesses {
 
     public static void processFetch(ExpSet expSet) throws FileNotFoundException, Exception {
         System.out.println("Fectching results using NoSkE searcher ... ");
-        Set<MenEntry> readMenData = MenUtils.readMenData(expSet.menFile);
+        Set<MenEntry> readMenData = MenUtils.readMenData(expSet.getMenFile());
         System.out.println("Dumping files at " + expSet.getRawContextFilesPath());
-        Step1CollectFreq s1 = new Step1CollectFreq(expSet, NUMBER_OF_THREAD_SERVER_INDEX);
+        Step1CollectFreqVectorBits s1 = new Step1CollectFreqVectorBits(expSet, NUMBER_OF_THREAD_SERVER_INDEX);
         for (MenEntry ent : readMenData) {
             ContextQueryLemmaTag contextQueryLemmaTag = new ContextQueryLemmaTag(ent.getLemma(), ent.getTag());
             List<FCRITInfo> fcritContextQueries = expSet.getFCRITContextQueries();
@@ -64,14 +64,14 @@ public class StaticStepProcesses {
         s1.shutdownWait();
     }
 
-    public static void processAggregiate(ExpSet expSet) throws IOException, Exception {
+    public static void processAggregiate(ExpSet expSet, String normSimWeightType) throws IOException, Exception {
 
         ExecutorService newFixedThreadPool = Executors.newFixedThreadPool(NUMBER_OF_THREAD_SERVER_PROCESS);
 
-        Set<MenEntry> readMenData = MenUtils.readMenData(expSet.menFile);
+        Set<MenEntry> readMenData = MenUtils.readMenData(expSet.getMenFile());
         for (MenEntry me : readMenData) {
             ContextQueryLemmaTag contextQueryLemmaTag = new ContextQueryLemmaTag(me.getLemma(), me.getTag());
-            StanardContextVector scv = new StanardContextVector(expSet, contextQueryLemmaTag);
+            StanardContextVectorBuilder scv = new StanardContextVectorBuilder(expSet, normSimWeightType, contextQueryLemmaTag);
             // scv.aggregateFreq2File();
             newFixedThreadPool.submit(scv);
         }
@@ -84,16 +84,16 @@ public class StaticStepProcesses {
     public static void processSimilarities(ExpSet expSet, String simType) throws IOException, Exception {
         
         ExecutorService newFixedThreadPool = Executors.newFixedThreadPool(NUMBER_OF_THREAD_SERVER_PROCESS);
-        List<MenPair> readMenPair = MenUtils.readMenPair(expSet.menFile);
+        List<MenPair> readMenPair = MenUtils.readMenPair(expSet.getMenFile());
         File fout = new File(expSet.getSimilarityResultFile(simType));
         if (!fout.getParentFile().exists()) {
             fout.getParentFile().mkdirs();
         }
         PrintWriter pw = new PrintWriter(new FileWriter(fout));
         for (MenPair me : readMenPair) {
-            ContextQueryLemmaTag cltx1 = new ContextQueryLemmaTag(me.gerMenEntry1().getLemma(), me.gerMenEntry1().getTag());
-            ContextQueryLemmaTag cltx2 = new ContextQueryLemmaTag(me.gerMenEntry2().getLemma(), me.gerMenEntry2().getTag());
-            ComputeSimilarity cs = new ComputeSimilarity(expSet, cltx1, cltx2,
+            ContextQueryLemmaTag cltx1 = new ContextQueryLemmaTag(me.getMenEntry1().getLemma(), me.getMenEntry1().getTag());
+            ContextQueryLemmaTag cltx2 = new ContextQueryLemmaTag(me.getMenEntry2().getLemma(), me.getMenEntry2().getTag());
+            ComputeSimilarity cs = new ComputeSimilarity(expSet, simType, cltx1, cltx2,
                     pw);
             newFixedThreadPool.submit(cs);
             // break;

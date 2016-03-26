@@ -17,7 +17,7 @@
 package de.phil.hhu.men.standard.processchains;
 
 import de.hhu.phil.men.process.ComputeSimilarity;
-import de.hhu.phil.buildvectors.StanardContextVector;
+import de.hhu.phil.buildvectors.StanardContextVectorBuilder;
 import de.phil.hhu.men.standard.processchains.ProcessChainModel3;
 import de.phil.hhu.men.utils.MenUtils;
 import de.hhu.phil.men.process.STEPCompareResults;
@@ -45,12 +45,12 @@ public class Chain3Callable implements Runnable {
 
     private int theSecodn;
     private ExpSet expSet;
-    private String simType;
+    private String simWeightingType;
 
     public Chain3Callable(int theSecodn, ExpSet expSet, String simType) {
         this.theSecodn = theSecodn;
         this.expSet = expSet;
-        this.simType = simType;
+        this.simWeightingType = simType;
 
     }
 
@@ -63,10 +63,10 @@ public class Chain3Callable implements Runnable {
     public void secondAndThreadChainParallel() {
         try {
             ExecutorService theSecondStep = Executors.newFixedThreadPool(theSecodn);
-            Set<MenEntry> readMenData = MenUtils.readMenData(expSet.menFile);
+            Set<MenEntry> readMenData = MenUtils.readMenData(expSet.getMenFile());
             for (MenEntry me : readMenData) {
                 ContextQueryLemmaTag contextQueryLemmaTag = new ContextQueryLemmaTag(me.getLemma(), me.getTag());
-                StanardContextVector scv = new StanardContextVector(expSet, contextQueryLemmaTag);
+                StanardContextVectorBuilder scv = new StanardContextVectorBuilder(expSet, simWeightingType, contextQueryLemmaTag);
                 // scv.aggregateFreq2File();
                 theSecondStep.submit(scv);
             }
@@ -74,17 +74,17 @@ public class Chain3Callable implements Runnable {
             while (!theSecondStep.awaitTermination(1, TimeUnit.SECONDS));
             System.out.println("Done");
             ExecutorService execSim = Executors.newFixedThreadPool(20);
-            List<MenPair> readMenPair = MenUtils.readMenPair(expSet.menFile);
-            File fout = new File(expSet.getSimilarityResultFile(simType));
+            List<MenPair> readMenPair = MenUtils.readMenPair(expSet.getMenFile());
+            File fout = new File(expSet.getSimilarityResultFile(simWeightingType));
             if (!fout.getParentFile().exists()) {
                 fout.getParentFile().mkdirs();
             }
             PrintWriter pw = new PrintWriter(new FileWriter(fout));
 
             for (MenPair me : readMenPair) {
-                ContextQueryLemmaTag cltx1 = new ContextQueryLemmaTag(me.gerMenEntry1().getLemma(), me.gerMenEntry1().getTag());
-                ContextQueryLemmaTag cltx2 = new ContextQueryLemmaTag(me.gerMenEntry2().getLemma(), me.gerMenEntry2().getTag());
-                ComputeSimilarity cs = new ComputeSimilarity(expSet, cltx1, cltx2,
+                ContextQueryLemmaTag cltx1 = new ContextQueryLemmaTag(me.getMenEntry1().getLemma(), me.getMenEntry1().getTag());
+                ContextQueryLemmaTag cltx2 = new ContextQueryLemmaTag(me.getMenEntry2().getLemma(), me.getMenEntry2().getTag());
+                ComputeSimilarity cs = new ComputeSimilarity(expSet,simWeightingType, cltx1, cltx2,
                         pw);
                 execSim.submit(cs);
                 // break;
@@ -92,7 +92,7 @@ public class Chain3Callable implements Runnable {
             execSim.shutdown();
             while (!execSim.awaitTermination(1, TimeUnit.SECONDS));
             pw.close();
-            STEPCompareResults.compareResults(expSet, simType);
+            STEPCompareResults.compareResults(expSet, simWeightingType);
             expSet.printConfiguration();
         } catch (IOException ex) {
             System.err.println(ex);

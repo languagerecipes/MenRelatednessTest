@@ -17,6 +17,7 @@
 package ie.pars.experiment.context;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 /**
@@ -27,24 +28,36 @@ public interface IExpSet {
 
     public String getRoot();
 
-    public void printConfiguration();
+    public void printConfiguration() throws IOException;
 
     public List<FCRITInfo> getFCRITContextQueries();
 
-    public String getContextQuery(ContextQuery clt);
+
 
     public String getExpIdentifier();
 
     public String getSimilarityResultFile(String simMeasureType);
 
-    public String getSparseVectorPresentations();
+    public String getSparseVectorPresentations()  throws UnsupportedEncodingException ;
 
-    public String getRawContextFilesPath();
+    public String getRawContextFilesPath() throws UnsupportedEncodingException;
 
-    public String getRawContextFilesName(ContextQuery cq, FCRITInfo fcrit);
+    public String getRawContextFilesName(IContextQuery cq, FCRITInfo fcrit) throws UnsupportedEncodingException;
 
     public String getFinalResultReport();
 
-    public String getSparseVectorPresentations(ContextQuery ctxQuery);
+    //public String getSparseVectorPresentations(IContextQuery ctxQuery) throws UnsupportedEncodingException;
+    public String getSparseVectorPresentations(IContextQuery ctxQuery, String weightingType) throws UnsupportedEncodingException;
+    public String getContextFreqProfileFile();
+    
+      public String getCorpus() ;
+    
+    public String getBaseURL();
+
+    public String getRunCGI();
+
+    
+  //  public String getSimType();
+   // public String weightingType();
 
 }

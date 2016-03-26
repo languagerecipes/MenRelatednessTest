@@ -40,14 +40,14 @@ import java.util.concurrent.TimeUnit;
 public class OnlyComputeSimilarity {
 
     public static void main(String[] ss) throws IOException, Exception {
-        for (int i = 1; i < 9; i++) {
+        for (int i = 1; i < 5; i++) {
 
             ExpSet expSet = new ExpSet("15032015-", -1 * i, 1 * i);
-            String simType = "cos";
+            String simType = "cos-ppmi";
             //Writer w = new PrintWriter(System.out);
             int numebrOfThreads = 40;
             ExecutorService newFixedThreadPool = Executors.newFixedThreadPool(numebrOfThreads);
-            List<MenPair> readMenPair = MenUtils.readMenPair(expSet.menFile);
+            List<MenPair> readMenPair = MenUtils.readMenPair(expSet.getMenFile());
             File fout = new File(expSet.getSimilarityResultFile(simType));
             if (!fout.getParentFile().exists()) {
                 fout.getParentFile().mkdirs();
@@ -55,9 +55,9 @@ public class OnlyComputeSimilarity {
             PrintWriter pw = new PrintWriter(new FileWriter(fout));
 
             for (MenPair me : readMenPair) {
-                ContextQueryLemmaTag cltx1 = new ContextQueryLemmaTag(me.gerMenEntry1().getLemma(), me.gerMenEntry1().getTag());
-                ContextQueryLemmaTag cltx2 = new ContextQueryLemmaTag(me.gerMenEntry2().getLemma(), me.gerMenEntry2().getTag());
-                ComputeSimilarity cs = new ComputeSimilarity(expSet, cltx1, cltx2,
+                ContextQueryLemmaTag cltx1 = new ContextQueryLemmaTag(me.getMenEntry1().getLemma(), me.getMenEntry1().getTag());
+                ContextQueryLemmaTag cltx2 = new ContextQueryLemmaTag(me.getMenEntry2().getLemma(), me.getMenEntry2().getTag());
+                ComputeSimilarity cs = new ComputeSimilarity(expSet,simType, cltx1, cltx2,
                         pw);
                 newFixedThreadPool.submit(cs);
                 // break;

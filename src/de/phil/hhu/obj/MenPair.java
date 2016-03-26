@@ -23,11 +23,11 @@ public class MenPair {
 
     }
 
-    public MenEntry gerMenEntry1() {
+    public MenEntry getMenEntry1() {
         return new MenEntry(keyOne.split("-")[0], keyOne.split("-")[1]);
     }
 
-    public MenEntry gerMenEntry2() {
+    public MenEntry getMenEntry2() {
         return new MenEntry(keyTwo.split("-")[0], keyTwo.split("-")[1]);
     }
 

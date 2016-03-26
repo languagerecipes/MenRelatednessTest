@@ -20,6 +20,7 @@ import de.phil.hhu.obj.MenEntry;
 import de.phil.hhu.obj.MenPair;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import java.util.TreeSet;
  * @author Behrang QasemiZadeh <zadeh at phil.hhu.de>
  */
 public class MenUtils {
-  
+
     public static Set<MenEntry> readMenData(String file) throws IOException {
         Set<MenEntry> menEntry = new TreeSet();
         BufferedReader br = new BufferedReader(new FileReader(new File(file)));
@@ -43,19 +44,18 @@ public class MenUtils {
         }
         return menEntry;
     }
-    
-    public static int countContextFileFreq(File f) throws IOException{
+
+    public static int countContextFileFreq(File f) throws IOException {
         BufferedReader bf = new BufferedReader(new FileReader(f));
         String line;
         int count = 0;
-        while((line=bf.readLine())!=null){
+        while ((line = bf.readLine()) != null) {
             int parseInt = Integer.parseInt(line.split(" : ")[1]);
-            count+=parseInt;
+            count += parseInt;
         }
         return count;
     }
-    
-
+  
 //      private List<String[]> readMenPair(String file) throws IOException {
 //        List<String[]> menEntry = new ArrayList();
 //        BufferedReader br = new BufferedReader(new FileReader(new File(file)));
@@ -70,7 +70,27 @@ public class MenUtils {
 //        return menEntry;
 //
 //    }
-      
+    
+    public static List<MenPair> readSym999ToMenPair(String file) throws IOException {
+        List<MenPair> menEntry = new ArrayList();
+        BufferedReader br = new BufferedReader(new FileReader(new File(file)));
+        String line = null;
+
+        while ((line = br.readLine()) != null) {
+
+            String bit[] = new String[2];
+            bit[0] = line.split("\t")[0];
+            bit[1] = line.split("\t")[1];
+            MenPair m = new MenPair(bit[0], bit[1]);
+            double parseDouble = Double.parseDouble(line.split(" ")[2]);
+            m.setSim(parseDouble);
+            menEntry.add(m);
+        }
+        br.close();
+        return menEntry;
+
+    }
+
     public static List<MenPair> readMenPair(String file) throws IOException {
         List<MenPair> menEntry = new ArrayList();
         BufferedReader br = new BufferedReader(new FileReader(new File(file)));
@@ -89,5 +109,42 @@ public class MenUtils {
         br.close();
         return menEntry;
 
+    }
+
+    public static  TreeSet<String> loadItemList(String file, int atPos, String delim) throws FileNotFoundException, IOException{
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line;
+        TreeSet<String> set = new TreeSet<>();
+        while((line=br.readLine())!=null){
+            set.add(line.split(delim)[atPos]);
+            
+        }
+        br.close();
+        return set;
+        
+    }
+    
+    public static void getRamReport() {
+        int gb = 1024 * 1024 * 1024;
+        Runtime runtime = Runtime.getRuntime();
+        System.out.println("Total Memory:" + runtime.totalMemory() / gb);
+
+        //Print Maximum available memory
+        System.out.println("Max Memory:" + runtime.maxMemory() / gb);
+        System.out.println("##### Heap utilization statistics [GB] #####");
+
+        //Print used memory
+        System.out.println("Used Memory:"
+                + (runtime.totalMemory() - runtime.freeMemory()) / gb);
+
+        //Print free memory
+        System.out.println("Free Memory:"
+                + runtime.freeMemory() / gb);
+
+        //Print total available memory
+    }
+
+    public static void loadItemList(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
